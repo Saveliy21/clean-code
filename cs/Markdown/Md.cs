@@ -6,6 +6,7 @@ public class Md
     {
         Preparator preparator = new Preparator();
         Converter converter = new Converter();
-        return converter.ConvertWithTokens(preparator.GetTokens(markdown));
+        preparator.Paragrapher(markdown);
+        return converter.ConvertWithTokens(preparator.GetTokens());
     }
 }

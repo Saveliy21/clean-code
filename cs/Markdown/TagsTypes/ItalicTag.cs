@@ -2,21 +2,17 @@
 
 public class ItalicTag : ITagsType
 {
-    public string MarkdownTag { get; }
-    public bool HasPairTag { get; }
-    public bool IsCloseTag { get; }
-    public bool IsNeedCloseTag { get; }
+    public string MarkdownTag { get; } = "_";
+    public bool HasPair { get; set; }
 
-    public string GetHtmlTag()
+    public string GetHtmlOpenTag()
     {
-        return IsCloseTag ? "</em>" : "<em>";
+        return  "<em>";
     }
 
-    public ItalicTag(bool isCloseTag, bool hasPairTag)
+    public string GetHtmlCloseTag()
     {
-        MarkdownTag = "_";
-        IsCloseTag = isCloseTag;
-        HasPairTag = hasPairTag;
-        IsNeedCloseTag = true;
+        return "</em>";
     }
+    
 }

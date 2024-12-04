@@ -1,11 +1,18 @@
-﻿namespace Markdown;
+﻿using System.Text;
+
+namespace Markdown;
 
 public class Converter
 {
-    public string Result = "";
-
     public string ConvertWithTokens(List<Token> tokens)
     {
-        throw new NotImplementedException();
+        StringBuilder result = new();
+
+        foreach (var token in tokens)
+        {
+            result.Append(token.Context);
+        }
+
+        return result.ToString();
     }
 }

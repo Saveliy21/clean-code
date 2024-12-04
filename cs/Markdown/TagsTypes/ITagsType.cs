@@ -3,8 +3,7 @@
 public interface ITagsType
 {
     public string MarkdownTag { get; }
-    public bool HasPairTag { get; }
-    public bool IsCloseTag { get; }
-    public bool IsNeedCloseTag { get; }
-    public string GetHtmlTag();
+    public bool HasPair { get; set; }
+    public string GetHtmlOpenTag();
+    public string GetHtmlCloseTag();
 }

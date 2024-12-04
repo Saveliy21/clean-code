@@ -2,21 +2,16 @@
 
 public class HeadingTag : ITagsType
 {
-    public string MarkdownTag { get; }
-    public bool HasPairTag { get; }
-    public bool IsCloseTag { get; }
-    public bool IsNeedCloseTag { get; }
+    public string MarkdownTag { get; } = "#";
+    public bool HasPair { get; set; } = true;
 
-    public HeadingTag(bool isCloseTag, bool hasPairTag)
+    public string GetHtmlOpenTag()
     {
-        MarkdownTag = "#";
-        IsCloseTag = isCloseTag;
-        HasPairTag = hasPairTag;
-        IsNeedCloseTag = false;
+        return "<h1>";
     }
 
-    public string GetHtmlTag()
+    public string GetHtmlCloseTag()
     {
-        return IsCloseTag ? "</h1>" : "<h1>";
+        return "</h1>";
     }
 }

@@ -2,21 +2,16 @@
 
 public class BoldTag : ITagsType
 {
-    public string MarkdownTag { get; }
-    public bool HasPairTag { get; }
-    public bool IsCloseTag { get; }
-    public bool IsNeedCloseTag { get; }
+    public string MarkdownTag { get; } = "__";
+    public bool HasPair { get; set; }
 
-    public BoldTag(bool isCloseTag, bool hasPairTag)
+    public string GetHtmlOpenTag()
     {
-        MarkdownTag = "__";
-        IsCloseTag = isCloseTag;
-        HasPairTag = hasPairTag;
-        IsNeedCloseTag = true;
+        return "<strong>";
     }
 
-    public string GetHtmlTag()
+    public string GetHtmlCloseTag()
     {
-        return IsCloseTag ? "</strong>" : "<strong>";
+        return "</strong>";
     }
 }
