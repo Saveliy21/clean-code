@@ -117,14 +117,13 @@ public class MarkdownTests
     public void Md_ShouldEnd_WithLinearTime()
     {
         const string markdown = "# __Princes _of the_ Universe__";
-
-        var renderMd = () =>
+        var markdownSb = new StringBuilder();
+        for (int i = 0; i < 100000; i++)
         {
-            for (var i = 0; i < 1000000; i++)
-            {
-                Md.Render(markdown);
-            }
-        };
+            markdownSb.Append(markdown);
+        }
+
+        var renderMd = () => { Md.Render(markdownSb.ToString()); };
 
         renderMd.ExecutionTime().Should().BeLessThan(10.Seconds());
     }
