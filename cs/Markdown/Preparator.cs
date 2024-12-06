@@ -6,10 +6,11 @@ namespace Markdown;
 
 public class Preparator
 {
-    private List<Token> tokens = new();
+    private readonly ListOfTokens<Token> tokens = new();
 
     private readonly BoldParser boldParser;
     private readonly ItalicParser italicParser;
+    private  LinkParser linkParser;
     private bool isHeadUp;
     private int countOfLastEddedTokens = 0;
     private readonly Stack<Token> tagsStack;
@@ -17,6 +18,7 @@ public class Preparator
 
     public Preparator()
     {
+        this.linkParser = new LinkParser();
         boldParser = new BoldParser();
         italicParser = new ItalicParser();
         slashParser = new SlashParser();
@@ -47,6 +49,8 @@ public class Preparator
         foreach (var token in words)
         {
             AddToken(token);
+            if(tokens.Count != 0)
+                tokens.Add(new Token(" "));
         }
 
         tokens.Remove(tokens.Last());
@@ -63,7 +67,11 @@ public class Preparator
     private void AddToken(string text)
     {
         var isHaveDigitInside = false;
-
+        if (linkParser.IsThisLink)
+        {
+            tokens.Add(linkParser.LinkParse(text));
+            return;
+        }
         for (int i = 0; i < text.Length; i++)
         {
             switch (text[i])
@@ -81,6 +89,9 @@ public class Preparator
                     tokens.Add(new Token(new HeadingTag().GetHtmlOpenTag()));
                     isHeadUp = true;
                     return;
+                case '[':
+                    tokens.Add(linkParser.LinkParse(text));
+                    return;
                 case '\\':
                     tokens.Add(slashParser.QuotedToken(text, i, boldParser.IsNextSymbolBold(text,i)));
                     i = slashParser.GetIndex();
@@ -92,8 +103,6 @@ public class Preparator
                     break;
             }
         }
-
-        tokens.Add(new Token(" "));
         countOfLastEddedTokens = tokens.Count - countOfLastEddedTokens;
         GetValidResult(isHaveDigitInside, italicParser.IsHaveInsideItalicTag, boldParser.IsHaveInsideBoldTag);
     }

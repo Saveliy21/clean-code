@@ -28,8 +28,6 @@ public class SlashParser
                     return new Token(new ItalicTag().MarkdownTag);
                 case '#':
                     return new Token(new HeadingTag().MarkdownTag);
-                case '\\':
-                    return new Token("\\");
             }
         }
 

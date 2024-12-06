@@ -13,15 +13,15 @@ public class MarkdownTests
     public void Md_ShouldReturnCorrectString_WithHeadingTag()
     {
         var result = Md.Render("# Thank God It's Christmas \n # Queen");
-        var expected = "<h1>Thank God It's Christmas </h1>\n <h1>Queen</h1>";
+        var expected = "<h1> Thank God It's Christmas </h1>\n <h1> Queen</h1>";
         result.Should().BeEquivalentTo(expected);
     }
 
     [Test]
     public void Md_ShouldReturnCorrectString_WithMixTags()
     {
-        var result = Md.Render("# __Princes _of the_ Universe__");
-        var expected = "<h1><strong>Princes <em>of the</em> Universe</strong></h1>";
+        var result = Md.Render("# __Princes _of the_ Universe__ [littleLink](Yes)");
+        var expected = "<h1> <strong>Princes <em>of the</em> Universe</strong> <a href=\"Yes\">littleLink</a></h1>";
         result.Should().BeEquivalentTo(expected);
     }
 
@@ -112,7 +112,15 @@ public class MarkdownTests
     {
         return Md.Render(text);
     }
-
+    [TestCase("[Let's listen it](https://www.youtube.com/watch?v=-tJYN-eG1zk)", 
+        ExpectedResult = "<a href=\"https://www.youtube.com/watch?v=-tJYN-eG1zk\">Let's listen it</a>")]
+    [TestCase("[Queen](https://en.wikipedia.org/wiki/Queen_(band))", 
+        ExpectedResult = "<a href=\"https://en.wikipedia.org/wiki/Queen_(band)\">Queen</a>")]
+    public string Md_ShouldReturnCorrectString_WithLink(string text)
+    {
+        return Md.Render(text);
+    }
+    
     [Test]
     public void Md_ShouldEnd_WithLinearTime()
     {
