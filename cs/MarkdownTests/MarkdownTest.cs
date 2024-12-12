@@ -2,7 +2,6 @@
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using Markdown;
-using Markdown.Parsers;
 using NUnit.Framework;
 
 namespace MarkdownTests;
@@ -12,7 +11,7 @@ public class MarkdownTests
     [Test]
     public void Md_ShouldReturnCorrectString_WithHeadingTag()
     {
-        var result = Md.Render("# Thank God It's Christmas \n # Queen");
+        var result = Md.Render("# Thank God It's Christmas \r\n # Queen");
         var expected = "<h1> Thank God It's Christmas </h1>\n <h1> Queen</h1>";
         result.Should().BeEquivalentTo(expected);
     }
@@ -68,6 +67,9 @@ public class MarkdownTests
     [TestCase("\\_", ExpectedResult = "_")]
     [TestCase("\\#", ExpectedResult = "#")]
     [TestCase("\\w", ExpectedResult = "\\w")]
+    [TestCase("\\# I want to break free", ExpectedResult = "# I want to break free")]
+    [TestCase("\\# I \\__wan\\__t \\_to\\_ break free", ExpectedResult = "# I __wan__t _to_ break free")]
+
     public string Md_ShouldReturnCorrectString_WithSlashes(string text)
     {
         return Md.Render(text);
@@ -80,8 +82,8 @@ public class MarkdownTests
         return Md.Render(text);
     }
 
-    [TestCase("_Bohemian _Rhapsody", ExpectedResult = "_Bohemian _Rhapsody")]
-    [TestCase("__Bohemian __Rhapsody", ExpectedResult = "__Bohemian __Rhapsody")]
+    [TestCase("_Bohemian _Rhapsody by Queen_", ExpectedResult = "_Bohemian <em>Rhapsody by Queen</em>")]
+    [TestCase("__Bohemian __Rhapsody by Queen__", ExpectedResult = "__Bohemian <strong>Rhapsody by Queen</strong>")]
     public string Md_ShouldReturnCorrectString_WithSpacesBeforeCloserTags(string text)
     {
         return Md.Render(text);
@@ -112,15 +114,16 @@ public class MarkdownTests
     {
         return Md.Render(text);
     }
-    [TestCase("[Let's listen it](https://www.youtube.com/watch?v=-tJYN-eG1zk)", 
+
+    [TestCase("[Let's listen it](https://www.youtube.com/watch?v=-tJYN-eG1zk)",
         ExpectedResult = "<a href=\"https://www.youtube.com/watch?v=-tJYN-eG1zk\">Let's listen it</a>")]
-    [TestCase("[Queen](https://en.wikipedia.org/wiki/Queen_(band))", 
+    [TestCase("[Queen](https://en.wikipedia.org/wiki/Queen_(band))",
         ExpectedResult = "<a href=\"https://en.wikipedia.org/wiki/Queen_(band)\">Queen</a>")]
     public string Md_ShouldReturnCorrectString_WithLink(string text)
     {
         return Md.Render(text);
     }
-    
+
     [Test]
     public void Md_ShouldEnd_WithLinearTime()
     {

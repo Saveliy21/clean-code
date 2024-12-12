@@ -1,9 +1,10 @@
 ﻿using System.Collections;
+using System.Security.Principal;
 using Markdown.TagsType;
 
 namespace Markdown.Parsers;
 
-public class BoldParser
+public class BoldParser : IParser
 {
     private readonly Stack<Token> tagsStack;
     private readonly GeneralParser.IsValidTag isValidOpenBoldTag;
@@ -24,7 +25,7 @@ public class BoldParser
         index = 0;
     }
 
-    public Token BoldParse(string text, int i)
+    private Token BoldParse(string text, int i)
     {
         index = i;
         index++;
@@ -34,24 +35,30 @@ public class BoldParser
         if (IsEmptyStringInsideBold(text, i))
         {
             index = text.Length;
-            return new Token("____");
+            return new Token("____", new TextTag());
         }
 
         if (IsBoldClosed)
         {
-            if (!isValidOpenBoldTag(text, i+1))
+            if (!isValidOpenBoldTag(text, i + 1))
             {
-                return (new Token("__"));
+                return (new Token("__", new TextTag()));
             }
         }
         else
         {
             if (!isValidCloseBoldTag(text, i))
             {
-                return new Token("__");
+                if (isValidOpenBoldTag(text, i))
+                {
+                    if (tagsStack.Count != 0)
+                        tagsStack.Pop();
+                    return addBoldTag(new BoldTag(), true);
+                }
+
+                return new Token("__", new TextTag());
             }
         }
-
 
         if (tagsStack.Count > 1 &&
             tagsStack.Any(p => p.Type is {MarkdownTag: "_"}) &&
@@ -59,10 +66,12 @@ public class BoldParser
         {
             tagsStack.Pop();
         }
+
         if (!IsBoldClosed && i == text.Length - 1)
         {
             tagsStack.Pop();
         }
+
         var boldTag = addBoldTag(new BoldTag(), IsBoldClosed);
         IsBoldClosed = !IsBoldClosed;
 
@@ -84,8 +93,6 @@ public class BoldParser
         return false;
     }
 
-    public int GetNewIndex() => index;
-
     private bool IsEmptyStringInsideBold(string text, int i)
     {
         int nextIndex = i + 1;
@@ -95,5 +102,17 @@ public class BoldParser
         }
 
         return false;
+    }
+
+    public bool TryParse(char symbol, string text, int i)
+    {
+        return symbol == '_' && IsNextSymbolBold(text, i);
+    }
+
+    public Token Parse(string text, ref int i)
+    {
+        var token = BoldParse(text, i);
+        i = index;
+        return token;
     }
 }

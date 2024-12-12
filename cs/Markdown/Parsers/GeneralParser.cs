@@ -22,14 +22,14 @@ public static class GeneralParser
     {
         if (isClose)
         {
-            var temp = new Token(tag.GetHtmlOpenTag(), tag);
+            var temp = new Token(tag.GetHtmlOpenTag, tag);
             tagsStack.Push(temp);
             return temp;
         }
 
         if (tagsStack.Count != 0 && tagsStack.Peek().Type?.MarkdownTag == tag.MarkdownTag)
             tag.HasPair = true;
-        return new Token(tag.GetHtmlCloseTag(), tag);
+        return new Token(tag.GetHtmlCloseTag, tag);
     }
 
     public static void ClosePairTag(Token token)

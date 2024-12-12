@@ -7,13 +7,7 @@ public class LinkTag : ITagsType
 
     public string LinkName = "";
     public string LinkUrl = "";
-    public string GetHtmlOpenTag()
-    {
-        return "<a href=\"";
-    }
+    public string GetHtmlOpenTag => $"<a href=\"{LinkUrl}\">";
 
-    public string GetHtmlCloseTag()
-    {
-        return "</a>";
-    }
+    public string GetHtmlCloseTag => "</a>";
 }

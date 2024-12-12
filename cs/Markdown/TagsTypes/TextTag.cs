@@ -1,6 +1,6 @@
 ﻿namespace Markdown.TagsType;
 
-public interface ITagsType
+public class TextTag : ITagsType
 {
     public string MarkdownTag { get; }
     public bool HasPair { get; set; }

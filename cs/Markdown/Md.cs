@@ -4,9 +4,8 @@ public class Md
 {
     public static string Render(string markdown)
     {
-        Preparator preparator = new Preparator();
+        TokenGenerator tokenGenerator = new TokenGenerator();
         Converter converter = new Converter();
-        preparator.Paragrapher(markdown);
-        return converter.ConvertWithTokens(preparator.GetTokens());
+        return converter.ConvertWithTokens(tokenGenerator.SplitParagraphs(markdown));
     }
 }

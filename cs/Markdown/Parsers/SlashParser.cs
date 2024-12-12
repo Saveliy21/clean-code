@@ -2,39 +2,53 @@
 
 namespace Markdown.Parsers;
 
-public class SlashParser
+public class SlashParser : IParser
 {
+    private int index;
+    private BoldParser boldParser;
 
-    private int Index;
-
-    public SlashParser()
+    public SlashParser(BoldParser boldParser)
     {
-        Index = 0;
+        this.boldParser = boldParser;
+        index = 0;
     }
-    public Token QuotedToken(string text, int i, bool isNextSymbolBold)
+
+    private Token QuotedToken(string text, int i, bool isNextSymbolBold)
     {
         i++;
-        Index = i;
-        if (Index < text.Length)
+        index = i;
+        if (index < text.Length)
         {
-            switch (text[Index])
+            switch (text[index])
             {
                 case '_':
-                    if (Index + 1 < text.Length && isNextSymbolBold)
+                    if (index + 1 < text.Length && isNextSymbolBold)
                     {
-                        Index++;
-                        return new Token(new BoldTag().MarkdownTag);
+                        index++;
+                        return new Token(new BoldTag().MarkdownTag, new TextTag());
                     }
-                    return new Token(new ItalicTag().MarkdownTag);
+
+                    return new Token(new ItalicTag().MarkdownTag, new TextTag());
                 case '#':
-                    return new Token(new HeadingTag().MarkdownTag);
+                    return new Token(new HeadingTag().MarkdownTag, new TextTag());
             }
         }
 
-        Index--;
-        return new Token("\\");
+        index--;
+        return new Token("\\", new TextTag());
     }
-    
-    public int GetIndex() => Index;
-    
+
+    public int GetIndex() => index;
+
+    public bool TryParse(char symbol, string text, int i)
+    {
+        return symbol == '\\';
+    }
+
+    public Token Parse(string text, ref int i)
+    {
+        var token = QuotedToken(text, i, boldParser.IsNextSymbolBold(text, i + 1));
+        i = index;
+        return token;
+    }
 }
